@@ -1,15 +1,16 @@
+@ -0,0 +1,516 @@
 # Parallel Matrix Multiplication using Sequential, OpenMP, MPI and CUDA
 
 ## Experiment 1 — Parallel Computing
 
-This experiment implements the same matrix multiplication problem using four different computing models:
+This experiment solves the same matrix multiplication problem using four different computing approaches:
 
 1. **Sequential CPU**
 2. **OpenMP Shared-Memory Parallelism**
 3. **MPI Distributed-Memory Parallelism**
 4. **CUDA GPU Parallelism**
 
-The objective is to understand how the same computational problem behaves under different parallel computing architectures and to compare their execution performance.
+The main goal is to observe how the same workload behaves on different parallel architectures and compare their execution performance.
 
 ---
 
@@ -38,14 +39,14 @@ The objective is to understand how the same computational problem behaves under 
 
 ## 1. Objective
 
-The objective of this experiment is to implement and compare matrix multiplication using different computing paradigms:
+The aim of this experiment is to implement and evaluate matrix multiplication using different computing paradigms:
 
 - Sequential execution on a CPU
 - Shared-memory parallelism using OpenMP
 - Distributed-memory parallelism using MPI
 - GPU parallelism using CUDA
 
-The experiment demonstrates how parallel computing techniques can reduce execution time for computationally intensive operations.
+This experiment demonstrates how parallel processing techniques can improve the execution time of computationally intensive operations.
 
 ---
 
@@ -138,7 +139,7 @@ Parallel-Matrix-Multiplication/
 ## 5. Sequential Implementation
 
 ### 5.1 Description
-The sequential implementation performs matrix multiplication using a single CPU execution flow.
+The sequential version performs the complete matrix multiplication using a single CPU execution flow.
 
 The computation uses the standard three nested loops:
 ```c
@@ -151,7 +152,7 @@ for (int i = 0; i < N; i++) {
 }
 ```
 
-This implementation serves as the baseline for comparing the parallel implementations.
+This version is used as the baseline for evaluating the parallel implementations.
 
 ### 5.2 Compilation
 Inside the Ubuntu/WSL terminal:
@@ -173,9 +174,9 @@ gcc -O2 matrix_sequential.c -o matrix_sequential
 ## 6. OpenMP Implementation
 
 ### 6.1 Description
-OpenMP is used to implement shared-memory parallelism.
+OpenMP is used to introduce shared-memory parallel processing.
 
-Multiple CPU threads work simultaneously on different portions of the matrix multiplication while sharing the matrices in the same memory space. The outer loop of the matrix multiplication is parallelized across available cores.
+Multiple CPU threads process different portions of the matrix at the same time while using the same memory space. The outer matrix loop is divided among the available threads.
 
 ```text
 CPU Shared Memory
@@ -213,7 +214,7 @@ gcc -O2 -fopenmp matrix_openmp.c -o matrix_openmp
 ## 7. MPI Implementation
 
 ### 7.1 Description
-MPI (Message Passing Interface) is used to implement distributed-memory parallelism.
+MPI (Message Passing Interface) is used to perform distributed-memory parallel processing.
 
 The experiment uses four Ubuntu virtual machines:
 - **Master** (Rank 0)
@@ -292,9 +293,9 @@ env -u DISPLAY mpirun -np 4 --hostfile hosts ./matrix_mpi
 ## 8. CUDA Implementation
 
 ### 8.1 Description
-CUDA is used to perform massively parallel matrix multiplication on an NVIDIA GPU.
+CUDA is used to execute the matrix multiplication on an NVIDIA GPU using a large number of parallel threads.
 
-The CUDA implementation assigns one logical GPU thread to calculate one output element of matrix $C$.
+In the CUDA version, each logical GPU thread is responsible for calculating one element of the output matrix $C$.
 
 ```text
              GPU
@@ -359,7 +360,7 @@ Verification C[0][0] = 4000.00
 
 ## 9. Results
 
-All four implementations produced the exact verified result:
+All four implementations generated the same verified output:
 ```text
 C[0][0] = 4000.00
 ```
@@ -377,7 +378,7 @@ C[0][0] = 4000.00
 
 ## 10. Performance Comparison
 
-The sequential execution time is used as the baseline:
+The sequential execution time is taken as the reference point:
 
 $$\text{Speedup} = \frac{\text{Sequential Execution Time}}{\text{Parallel Execution Time}}$$
 
@@ -425,7 +426,7 @@ The massive parallelism of 16,000,000 GPU threads running on the RTX 2050 delive
 
 ## 12. Verification
 
-The same mathematical operation was executed across all four implementations:
+The identical matrix multiplication operation was carried out by all four implementations:
 
 Since $A[i][k] = 1.0$ and $B[k][j] = 1.0$ for all elements:
 $$C[i][j] = \sum_{k=0}^{3999} (1.0 \times 1.0) = 4000.00$$
@@ -511,6 +512,6 @@ The results highlight that as the degree of parallelism increases and hardware i
 
 ## Author
 
-**Sankalp Prakash Patil**  
+**Abhijit R H**  
 *B.Tech — Computer Science & Artificial Intelligence*  
 KLE Technological University
