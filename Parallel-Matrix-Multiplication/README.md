@@ -2,14 +2,14 @@
 
 ## Experiment 1 — Parallel Computing
 
-This experiment implements the same matrix multiplication problem using four different computing models:
+This experiment solves the same matrix multiplication problem using four different computing approaches:
 
 1. **Sequential CPU**
 2. **OpenMP Shared-Memory Parallelism**
 3. **MPI Distributed-Memory Parallelism**
 4. **CUDA GPU Parallelism**
 
-The objective is to understand how the same computational problem behaves under different parallel computing architectures and to compare their execution performance.
+The main goal is to observe how the same workload behaves on different parallel architectures and compare their execution performance.
 
 ---
 
@@ -38,14 +38,14 @@ The objective is to understand how the same computational problem behaves under 
 
 ## 1. Objective
 
-The objective of this experiment is to implement and compare matrix multiplication using different computing paradigms:
+The aim of this experiment is to implement and evaluate matrix multiplication using different computing paradigms:
 
 - Sequential execution on a CPU
 - Shared-memory parallelism using OpenMP
 - Distributed-memory parallelism using MPI
 - GPU parallelism using CUDA
 
-The experiment demonstrates how parallel computing techniques can reduce execution time for computationally intensive operations.
+This experiment demonstrates how parallel processing techniques can improve the execution time of computationally intensive operations.
 
 ---
 
@@ -138,7 +138,7 @@ Parallel-Matrix-Multiplication/
 ## 5. Sequential Implementation
 
 ### 5.1 Description
-The sequential implementation performs matrix multiplication using a single CPU execution flow.
+The sequential version performs the complete matrix multiplication using a single CPU execution flow.
 
 The computation uses the standard three nested loops:
 ```c
@@ -151,7 +151,7 @@ for (int i = 0; i < N; i++) {
 }
 ```
 
-This implementation serves as the baseline for comparing the parallel implementations.
+This version is used as the baseline for evaluating the parallel implementations.
 
 ### 5.2 Compilation
 Inside the Ubuntu/WSL terminal:
@@ -173,9 +173,9 @@ gcc -O2 matrix_sequential.c -o matrix_sequential
 ## 6. OpenMP Implementation
 
 ### 6.1 Description
-OpenMP is used to implement shared-memory parallelism.
+OpenMP is used to introduce shared-memory parallel processing.
 
-Multiple CPU threads work simultaneously on different portions of the matrix multiplication while sharing the matrices in the same memory space. The outer loop of the matrix multiplication is parallelized across available cores.
+Multiple CPU threads process different portions of the matrix at the same time while using the same memory space. The outer matrix loop is divided among the available threads.
 
 ```text
 CPU Shared Memory
@@ -213,7 +213,7 @@ gcc -O2 -fopenmp matrix_openmp.c -o matrix_openmp
 ## 7. MPI Implementation
 
 ### 7.1 Description
-MPI (Message Passing Interface) is used to implement distributed-memory parallelism.
+MPI (Message Passing Interface) is used to perform distributed-memory parallel processing.
 
 The experiment uses four Ubuntu virtual machines:
 - **Master** (Rank 0)
@@ -292,9 +292,9 @@ env -u DISPLAY mpirun -np 4 --hostfile hosts ./matrix_mpi
 ## 8. CUDA Implementation
 
 ### 8.1 Description
-CUDA is used to perform massively parallel matrix multiplication on an NVIDIA GPU.
+CUDA is used to execute the matrix multiplication on an NVIDIA GPU using a large number of parallel threads.
 
-The CUDA implementation assigns one logical GPU thread to calculate one output element of matrix $C$.
+In the CUDA version, each logical GPU thread is responsible for calculating one element of the output matrix $C$.
 
 ```text
              GPU
@@ -359,7 +359,7 @@ Verification C[0][0] = 4000.00
 
 ## 9. Results
 
-All four implementations produced the exact verified result:
+All four implementations generated the same verified output:
 ```text
 C[0][0] = 4000.00
 ```
@@ -377,7 +377,7 @@ C[0][0] = 4000.00
 
 ## 10. Performance Comparison
 
-The sequential execution time is used as the baseline:
+The sequential execution time is taken as the reference point:
 
 $$\text{Speedup} = \frac{\text{Sequential Execution Time}}{\text{Parallel Execution Time}}$$
 
@@ -407,11 +407,11 @@ CUDA         ▏                                            0.343028 s
 
 ### OpenMP
 $$\text{Speedup} = \frac{417.205920}{230.801465} \approx 1.81\times$$
-OpenMP reduced execution time by distributing row computation across 12 CPU threads on shared memory.
+OpenMP improved the execution time by dividing row calculations among 12 CPU threads using shared memory.
 
 ### MPI
 $$\text{Speedup} = \frac{417.205920}{138.772617} \approx 3.01\times$$
-MPI achieved a $3.01\times$ speedup across 4 virtual machines, scaling well across independent nodes despite network communication overhead (`MPI_Scatter` and `MPI_Gather`).
+MPI achieved a $3.01\times$ speedup across 4 virtual machines by distributing the workload between independent nodes, while still incurring communication overhead (`MPI_Scatter` and `MPI_Gather`).
 
 ### CUDA
 - **Total Phase Speedup**:
@@ -419,13 +419,13 @@ MPI achieved a $3.01\times$ speedup across 4 virtual machines, scaling well acro
 - **Kernel-Only Speedup**:
   $$\text{Speedup}_{\text{kernel}} = \frac{417.205920}{0.316872} \approx 1316.92\times$$
 
-The massive parallelism of 16,000,000 GPU threads running on the RTX 2050 delivered over $1200\times$ speedup compared to single-core CPU execution.
+Using 16,000,000 logical GPU threads on the RTX 2050 resulted in more than $1200\times$ speedup compared with the single-core CPU implementation.
 
 ---
 
 ## 12. Verification
 
-The same mathematical operation was executed across all four implementations:
+The identical matrix multiplication operation was carried out by all four implementations:
 
 Since $A[i][k] = 1.0$ and $B[k][j] = 1.0$ for all elements:
 $$C[i][j] = \sum_{k=0}^{3999} (1.0 \times 1.0) = 4000.00$$
@@ -443,10 +443,10 @@ $$C[i][j] = \sum_{k=0}^{3999} (1.0 \times 1.0) = 4000.00$$
 
 ## 13. Observations
 
-1. **Sequential**: Serves as the single-thread baseline ($417.21\text{ s}$). Without parallelism, CPU execution is bounded by serial loop throughput and cache hierarchy misses.
-2. **OpenMP**: Achieved $1.81\times$ speedup with 12 threads ($230.80\text{ s}$). Memory bus contention and cache coherence traffic become primary bottlenecks when multiple threads access large memory structures concurrently.
-3. **MPI**: Achieved $3.01\times$ speedup on 4 VMs ($138.77\text{ s}$). Distributed memory prevents cache-coherence bottlenecks, yielding near-linear scalability ($3.01/4 \approx 75\%$ parallel efficiency) despite communication overhead.
-4. **CUDA**: Achieved dramatic acceleration ($0.343\text{ s}$, $1216\times$ speedup). The streaming multiprocessors (SMs) on the RTX 2050 hide memory latency through massive thread-level parallelism and high memory bandwidth.
+1. **Sequential**: Acts as the single-thread reference ($417.21\text{ s}$). Without parallelism, CPU execution is bounded by serial loop throughput and cache hierarchy misses.
+2. **OpenMP**: Produced a $1.81\times$ speedup using 12 threads ($230.80\text{ s}$). Memory bus contention and cache coherence traffic become primary bottlenecks when multiple threads access large memory structures concurrently.
+3. **MPI**: Produced a $3.01\times$ speedup using 4 VMs ($138.77\text{ s}$). Distributed memory prevents cache-coherence bottlenecks, yielding near-linear scalability ($3.01/4 \approx 75\%$ parallel efficiency) despite communication overhead.
+4. **CUDA**: Provided the largest acceleration ($0.343\text{ s}$, $1216\times$ speedup). The streaming multiprocessors (SMs) on the RTX 2050 hide memory latency through massive thread-level parallelism and high memory bandwidth.
 
 ---
 
@@ -476,7 +476,7 @@ This experiment evaluated a $4000 \times 4000$ matrix multiplication workload ac
 - **MPI distributed-memory parallelism**: Process-based message passing across distinct cluster nodes.
 - **CUDA GPU parallelism**: Fine-grained massively parallel thread acceleration.
 
-The results highlight that as the degree of parallelism increases and hardware is tailored for compute-dense linear algebra workloads, execution time drops from nearly 7 minutes to approximately a third of a second.
+The results show that increasing parallelism and using hardware suited to matrix computations can greatly reduce execution time, from several minutes to roughly one-third of a second.
 
 ---
 
@@ -511,6 +511,6 @@ The results highlight that as the degree of parallelism increases and hardware i
 
 ## Author
 
-**Sankalp Prakash Patil**  
+**Abhijit R H**  
 *B.Tech — Computer Science & Artificial Intelligence*  
 KLE Technological University
