@@ -1,4 +1,3 @@
-@ -0,0 +1,516 @@
 # Parallel Matrix Multiplication using Sequential, OpenMP, MPI and CUDA
 
 ## Experiment 1 — Parallel Computing
